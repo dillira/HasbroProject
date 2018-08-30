@@ -1,0 +1,299 @@
+package util;
+/**
+ * @author Anjali Gupta
+ *
+ */
+
+/*import implementations.selenium.ExcelLibrary;
+import implementations.selenium.SeleniumDriver;*/
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import base.SeleniumDriver;
+
+import com.hasbro.security.BOM;
+import com.hasbro.security.Product;
+import com.hasbro.security.Specifications;
+//import org.apache.log4j.Logger;
+import com.hasbro.security.Supplier;
+
+
+public class CommonProjectFunctions {
+	static WebDriverWait wait=null;
+	public static String screenshotFilename="";
+	//public static WebDriver driver=null;
+	public static Logger log;
+	String url= "hasbroplm-dev.ptcmanaged.com/Windchill/rfa/jsp/main/Main.jsp";
+	static By quickLinks= By.id("quickLinkSelectionId");
+	public static By searchProduct= By.name("quickSearchCriteria");
+	public static By searchIcon= By.id("searchButton");
+	public static By MaterialsTab= By.xpath("//a[@class='subtabTxtNsel' and contains(text(),'Materials')]");
+	public static By mySeasonLink = By.id("seasonsContentIcon");
+	public static By mySeasonYear = By.id("seasonSelectList");
+	public static String strSpecification;
+	public static String strSpec;
+	public static String prodName;
+
+	/*
+	 * This function is to log out from application
+	 */
+	public static void logOut() throws Exception{
+		try{
+			//Click on Quick Links
+			SeleniumDriver.driver.switchTo().defaultContent();
+			SeleniumDriver.driver.switchTo().frame("headerframe");
+			CommonFunctions.selectFromDropDownByValue(quickLinks, "logout");
+			CommonFunctions.handleAlertPopUp();
+			CommonFunctions.handleAlertPopUp();
+			SeleniumDriver.driver.quit();
+		}
+		catch(Exception e){
+			SeleniumDriver.log.error("Exception in logOut()", e);
+
+		}
+	}
+	
+	/*
+	 * This function is to log out from application
+	 */
+	public static void goToWindChill() throws Exception{
+		try{
+			//Click on Quick Links
+			SeleniumDriver.driver.switchTo().defaultContent();
+			SeleniumDriver.driver.switchTo().frame("headerframe");
+			CommonFunctions.selectFromDropDownByValue(quickLinks, "Go to Windchill");
+		}
+		catch(Exception e){
+			SeleniumDriver.log.error("Exception in goToWindChill()", e);
+
+		}
+	}
+
+	/*
+	 * 
+	 */
+	public static void clickLibrariesOption(By libOption) throws Exception{
+		//	String alertMsg="";
+		try{
+			SeleniumDriver.driver.findElement(libOption).click();
+		}
+		catch(Exception e){
+			SeleniumDriver.log.error("Exception in clickLibrariesOption()", e);
+
+		}
+		//	return libOption;
+	}
+	/*
+	 * This function is to click My season link in left pane
+	 */
+	public static void clickMySeasonLink() throws Exception{
+		try{
+			SeleniumDriver.driver.switchTo().frame("sidebarframe");
+			CommonFunctions.clickButtonOrLink(mySeasonLink, "link", "My Season link");
+			CommonFunctions.waitForVisibilityOfElement(mySeasonYear);
+
+		}
+		catch(Exception e){
+			SeleniumDriver.log.error("Exception in clickLibrariesOption()", e);
+		}
+	}
+	
+	//Function consist scenario : Click on detail tab
+	public static boolean clickSupplierLink() throws Exception{
+		try{
+			//Click on vendor Supplier link
+			SeleniumDriver.driver.findElement(Supplier.supplierLink).click();
+			//	CommonProjectFunctions.clickLibrariesOption(seasonLink);
+			//Switch frame
+			SeleniumDriver.driver.switchTo().defaultContent();
+			SeleniumDriver.driver.switchTo().frame("contentframe");
+			CommonFunctions.waitForVisibilityOfElement(Supplier.supplierPageheading);
+		}catch(Exception e){ 
+		//	fail=true;
+			log.error("Exception in clickSupplierLink()", e);
+			return false;
+		}
+		return true;
+	}
+	
+	//This funcion is to Search Supplier	
+	public static void Search_Supplier() throws Exception{
+		try{
+			//Click on search
+			CommonFunctions.clickButtonOrLink(Supplier.search, "btn", "Search");
+			CommonFunctions.waitForVisibilityOfElement(Supplier.searchPageHeading);
+			//Click on first name in list
+			CommonFunctions.clickButtonOrLink(Supplier.firstSupplier, "link", "Supplier Name");
+		}catch(Exception e){  
+		//	fail=true;
+			log.error("Exception in Supplier_selectUpdateLifecycleState()", e);
+		}
+	//	return valULCSAfterChange;
+	}
+	
+	//Create Product
+	public static String CreateProdFromLineSheet(String prodType,String year,String strlineSheetView,String strlineSheetAction,
+			String strClass,String strDivision,String strBrand,String strInternalClassification,String AstSolid,String strIPSensitive,
+			String strElectronicsIncluded,String strSoftgoodsIncluded,String strDistributionChannel,String strSRPPriceUSD,String strUSDomestic
+			,String strLCPriceUSD,String strDOMPriceUSD) throws Exception{
+		try{
+			CommonProjectFunctions.clickMySeasonLink();
+			//Select Season Year
+			CommonFunctions.selectFromDropDownByVisibleText(mySeasonYear, year);
+			//Click on Line Sheet link
+			CommonFunctions.clickButtonOrLink(Product.lineSheet, "link", "Line Sheet");
+			Thread.sleep(1000);
+			SeleniumDriver.driver.switchTo().defaultContent();
+			SeleniumDriver.driver.switchTo().frame("contentframe");
+
+			Date date = new Date();
+			//Select Line sheet view
+			CommonFunctions.waitForVisibilityOfElement(Product.lineSheetView);
+			CommonFunctions.selectFromDropDownByVisibleText(Product.lineSheetView, strlineSheetView);
+			CommonFunctions.selectFromDropDownByVisibleText(Product.lineSheetAction, strlineSheetAction);
+			//Click on Assortment/Solid
+			CommonFunctions.waitForVisibilityOfElement(By.xpath("//td[contains(text(),'Choose a Type')]"));
+			CommonFunctions.clickButtonOrLink(By.xpath("//a[contains(text(),'"+prodType+"')]"), "link", "Product Type");
+			Product.Prodname=prodName+date.getTime();
+			Product.Prodname=Product.Prodname.substring(0,8);
+			CommonFunctions.enterTextInTextbox(Product.ProductName,Product.Prodname);
+			if(!prodName.equalsIgnoreCase("Trademark Display")){
+				//Select Class
+				CommonFunctions.enterTextInTextbox(Product.Class, strClass);
+				CommonFunctions.enterTextInTextbox(Product.Division, strDivision);
+				CommonFunctions.enterTextInTextbox(Product.Brand, strBrand);
+				if(!prodType.equalsIgnoreCase("Trademark Pallet")){
+					CommonFunctions.enterTextInTextbox(Product.InternalClassification,strInternalClassification);
+					//	CommonFunctions.enterTextInTextbox(AstSolid, productData[14]);
+					CommonFunctions.selectFromDropDownByVisibleText(Product.AstSolid, AstSolid);
+					//	CommonFunctions.enterTextInTextbox(IPSensitive,productData[16]);
+					CommonFunctions.selectFromDropDownByVisibleText(Product.IPSensitive,strIPSensitive);
+				}
+
+				if(prodType.equalsIgnoreCase("Retail")|| prodType.equalsIgnoreCase("Bundle Pack")){
+					//Electronics Included
+					CommonFunctions.enterTextInTextbox(Product.electronicsIncluded,strElectronicsIncluded);
+					//Softgoods Included
+					CommonFunctions.enterTextInTextbox(Product.softgoodsIncluded,strSoftgoodsIncluded);
+				}
+			}
+			//Click on Save Button
+			CommonFunctions.clickButtonOrLink(Product.SaveBtn, "Btn", "Save");
+			if(!prodType.equalsIgnoreCase("Trademark Display")){
+				//wait = new WebDriverWait(driver, 10);
+				//	wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(viewProductBtn));
+				CommonFunctions.enterTextInTextbox(Product.distributionChannel,strDistributionChannel);
+				if(prodType.equalsIgnoreCase("Assortment/Solid")){
+					CommonFunctions.enterTextInTextbox(Product.SRPPriceUSD,strSRPPriceUSD);
+					CommonFunctions.enterTextInTextbox(Product.USDomestic,strUSDomestic);
+					CommonFunctions.enterTextInTextbox(Product.LCPriceUSD,strLCPriceUSD);
+					CommonFunctions.enterTextInTextbox(Product.DOMPriceUSD,strDOMPriceUSD);
+				}
+				if(prodType.equalsIgnoreCase("Retail")|| prodType.equalsIgnoreCase("Bundle Pack")){
+					CommonFunctions.enterTextInTextbox(Product.targetCostUSD, strDOMPriceUSD);
+				}
+			}
+			//Click View Product Button
+			CommonFunctions.clickButtonOrLink(Product.viewProductBtn, "Btn", "View Product");
+
+		}catch(Exception e){ 
+			log.error("Exception in CreateProductFromLineSheet()", e);
+		//	return prodName;
+		}
+		return prodName;
+	}
+
+	//Function consist scenario : Click on Specifications tab
+	public static boolean clickSpecificationTab(String dataYear) throws Exception{
+		try{
+			SeleniumDriver.driver.switchTo().defaultContent();
+			SeleniumDriver.driver.switchTo().frame("contentframe");
+			if(CommonFunctions.waitForVisibilityOfElement(Specifications.specificationsTablink))
+				CommonFunctions.clickButtonOrLink(Specifications.specificationsTablink, "link", "specifications tab");
+
+			CommonFunctions.clickButtonOrLink(Product.detailPageSeasonDD, "Season dropdown");
+			System.out.println(By.xpath("//*[@id='splId']/option[contains(text(),'"+dataYear+"')]"));
+			SeleniumDriver.driver.findElement(By.xpath("//*[@id='splId']/option[contains(text(),'"+dataYear+"')]")).click();
+		}catch(Exception e){
+			log.error("Exception in clickSpecificationTab()", e);
+			return false;
+		}
+		return true;
+	}
+
+	public static String Create_Specifications(String wave,String remarks) throws Exception{
+		try{
+			//Click create New Specification
+			CommonFunctions.clickButtonOrLink(Specifications.createNewSpecification, "btn", "create New Specification");
+			wait = new WebDriverWait(SeleniumDriver.driver, 10);
+			wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(Specifications.headingcreateNewSpecification));
+			//Fill page
+			//Enter wave
+			CommonFunctions.enterTextInTextbox(Specifications.wave, wave);
+			//Remarks
+			CommonFunctions.enterTextInTextbox(Specifications.remarks, remarks);
+			//Source:first Checkbox
+			CommonFunctions.clickButtonOrLink(Specifications.sourcesFirstCheckbox, "CheckBox", "Source");
+			String soureCheckbox =SeleniumDriver.driver.findElement(Specifications.sourcesFirstCheckbox).getText();
+			//click on Create
+			CommonFunctions.clickButtonOrLink(Product.createBtn, "btn", "Create");
+			System.out.println(SeleniumDriver.driver.findElement(By.xpath("//div[contains(@id,'specTitle')]")).getText());
+			strSpecification =SeleniumDriver.driver.findElement(By.xpath("//div[contains(@id,'specTitle')]")).getText();
+			System.out.println(strSpecification);
+			strSpec = strSpecification.substring(2, 13);
+			System.out.println(strSpec);
+
+
+		}catch(Exception e){
+			log.error("Exception in Create_Specifications()", e);
+			//	return false;
+		}
+		return strSpec;
+	}
+
+	//Function consist scenario : Click on Materials tab
+	public static boolean clickMaterialsTab() throws Exception{
+		try{
+
+			//	CommonFunctions.waitForVisibilityOfElement(MaterialsTab);
+			CommonFunctions.clickButtonOrLink(MaterialsTab, "link", "Materials Tab");
+			CommonFunctions.handleAlertPopUp();
+		//	CommonFunctions.waitForVisibilityOfElement(BOM.BOMDetails);
+
+		}catch(Exception e){
+			log.error("Exception in clickMaterialsTab()", e);
+			return false;
+		}
+		return true;
+	}
+
+
+
+	public static boolean searchProduct(String productData) throws Exception{
+		try{
+			//wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(searchProduct));
+			Thread.sleep(1000);
+			SeleniumDriver.driver.switchTo().defaultContent();
+			SeleniumDriver.driver.switchTo().frame("headerframe");
+			CommonFunctions.waitForVisibilityOfElement(searchProduct);
+			SeleniumDriver.driver.findElement(searchProduct).clear();
+			CommonFunctions.enterTextInTextbox(searchProduct, productData);
+			if(CommonFunctions.waitForElementTobeClickable(searchIcon))
+				CommonFunctions.clickButtonOrLink(searchIcon, "Btn", "SearchButton");
+		}catch(Exception e){
+			log.error("Exception in searchProduct()", e);
+			return false;
+		}
+		return true;
+	}
+}
+

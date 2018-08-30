@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;com.hasbro.security.Material&apos; to &apos;MaterialOld&apos;&#x0D;&#x0A;- Original project: &apos;FlexPLM&apos;&#x0D;&#x0A;- Original element: &apos;com.hasbro.security.Material&apos;&#x0D;&#x0A;- Renamed element: &apos;com.hasbro.security.MaterialOld&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;Material&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;com.hasbro.security{Material.java[Material" matchStrategy="1" name="MaterialOld" qualified="false" references="true" similarDeclarations="false" stamp="1516081780387" textual="false" version="1.0"/>
+</session>

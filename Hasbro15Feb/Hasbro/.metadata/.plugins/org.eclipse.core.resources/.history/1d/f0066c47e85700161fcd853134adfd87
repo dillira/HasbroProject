@@ -1,0 +1,1099 @@
+package Security;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import base.SeleniumDriver;
+import util.CommonFunctions;
+import util.CommonProjectFunctions;
+import util.ErrorUtil;
+import util.Utility;
+
+
+public class Product extends TestsuiteBase{
+
+	String runmodes[]=null;
+	static int count=-1;
+	static boolean skip=false;
+	static boolean fail=false;
+	static boolean isTestPass=true;
+	static WebDriverWait wait=null;
+	By libraryLink = By.id("librariesContentIcon");
+
+	static By seasonLink = By.linkText("Season");
+	static By newLink = By.xpath("//a[text()='New']");
+	static By productType = By.xpath("//a[contains(text(),'Product Type')]");
+	static By retailItem = By.xpath("//a[text()='Retail Item']");
+	static By seasonYear = By.id("ptc_str_1");
+	static By createBtn = By.xpath("//a[text()='Create']");
+	//My Season
+	static By mySeasonLink = By.id("seasonsContentIcon");
+	static By mySeasonYear = By.id("seasonSelectList");
+	static By lineSheet = By.linkText("Line Sheet");
+	static By lineSheetView = By.id("viewId");
+	static By lineSheetAction = By.name("linePlanActions");
+
+	static By labelHierarchy = By.xpath("//td[contains(text(),'Hierarchy')]");
+	static By labelGeneralAttri = By.xpath("//td[contains(text(),'General Attributes')]");
+	static By labelRetailItemCount = By.xpath("//td[contains(text(),'Retail Item Counts')]");
+	static By labelGlobalFroecasting = By.xpath("//td[contains(text(),'Global Forecasting')]");
+	static By labelFinance = By.xpath("//td[contains(text(),'Finance')]");
+
+	static By labelWaveRequirements1 = By.xpath("//td[contains(text(),'Wave Requirements 1 - Dates')]");
+	static By labelWaveRequirements2 = By.xpath("//td[contains(text(),'Wave Requirements 2 - Quantity')]");
+	static By labelWaveRequirements4 = By.xpath("//td[contains(text(),'Wave Requirements 4 - Suffix')]");
+	static By labelWaveRequirements5 = By.xpath("//td[contains(text(),'Wave Requirements 5 - Distribution')]");
+
+	static By labelWaveRequirements1Edit = By.xpath("//td[contains(text(),'Wave Requirements 1 - Dates')]//following::a[1]");
+	static By labelWaveRequirements2Edit = By.xpath("//td[contains(text(),'Wave Requirements 2 - Quantity')]//following::a[1]");
+	static By labelWaveRequirements4Edit = By.xpath("//td[contains(text(),'Wave Requirements 4 - Suffix')]//following::a[1]");
+	static By labelWaveRequirements5Edit = By.xpath("//td[contains(text(),'Wave Requirements 5 - Distribution')]//following::a[1]");
+
+	static By AssortmentSolid = By.xpath("//a[contains(text(),'Assortment/Solid')]");
+	static By Class = By.xpath("//td[contains(text(),'*Class')]//following::select[1]");
+	static By ROHierarchyClass = By.id("hbClassPr");
+
+	static By Editable_RIC_CFSpring = By.xpath("//td[contains(text(),'CF Spring')]//following::input[1]");
+	static By RO_RIC_CFSpring = By.id("hbCFSpringPr");
+
+	static By Editable_SRPPriceUSD= By.xpath("//td[contains(text(),'Target Cost (USD)')]//following::input[1]");
+	static By RO_SRPPriceUSD= By.id("hbSRPPriceUSDPr");
+
+	static By Editable_Finance_TargetCostUSD= By.xpath("//td[contains(text(),'SRP Price (USD)')]//following::input[1]");
+	static By RO_Finance_TargetCostUSD= By.id("hbTargetCostUSD");
+
+	static By Division = By.xpath("//td[contains(text(),'Division')]//following::select[1]");
+	static By Brand = By.xpath("//td[contains(text(),'*Brand')]//following::select[1]");
+	static By InternalClassification = By.xpath("//td[contains(text(),'Internal Classification')]//following::select[1]");
+	static By AstSolid = By.xpath("//td[contains(text(),'*Ast')]//following::select[1]");
+	static By ProductName = By.xpath("//td[contains(text(),'Product Name')]//following::input[1]");
+	static By ROProductName = By.id("hbProductName");
+	static By IPSensitive = By.xpath("//td[contains(text(),'IP Sensitive')]//following::select[1]");
+	static By SaveBtn = By.xpath("//a[text()='Save']");
+	//Create Product-Season Attributes Page
+	static By viewProductBtn = By.xpath("//a[text()='View Product.']");
+	static By distributionChannel  = By.xpath("//td[contains(text(),'Distribution Channel')]//following::select[1]");
+	static By SRPPriceUSD= By.xpath("//td[contains(text(),'SRP Price')]//following::input[1]");
+	static By USDomestic = By.xpath("//td[contains(text(),'US Domestic')]//following::input[1]");
+	static By LCPriceUSD = By.xpath("//td[contains(text(),'L/C Price')]//following::input[1]");
+	static By DOMPriceUSD= By.xpath("//td[contains(text(),'DOM Price ')]//following::input[1]");
+	//For Retail
+	static By targetCostUSD= By.xpath("//td[contains(text(),'Target Cost')]//following::input[1]");
+
+	static By detailsTablink= By.xpath("//a[text()='Details']");
+	static By searchProduct= By.name("quickSearchCriteria");
+	static By searchIcon= By.id("searchButton");
+	static By ddDetailsAction= By.id("prodseasonActions");
+	static By ddOptionchangeState= By.xpath("//select[@id='prodseasonActions']/option[contains(@value,'changeState')]");
+	static By ddOptionDeleteProduct= By.xpath("//select[@id='prodseasonActions']/option[contains(@value,'deleteObject')]");
+	static By detailPageSeasonDD= By.id("splId");
+	static By ROInternalClassification= By.id("hbInternalClassification");
+	//for Set State
+	static By setLifecycleState= By.xpath("//td[contains(text(),'Set Lifecycle State')]");
+	static By linkUpdate= By.xpath("//a[text()='Update']");
+
+	static By Editable_UpdateLifecycleState= By.id("lcstate");
+	static By RO_UpdateLifecycleState= By.xpath("//td[contains(text(),'Product Lifecycle State')]//following::td[1]");
+
+	static By season2018= By.xpath("//*[@id='splId']/option[contains(text(),'2018')]");
+	static By headerDeleteObject= By.xpath("//td[contains(text(),'Delete Object')]");
+	static By deleteButton= By.xpath("//a[text()='Delete']");
+	//For Retail
+	static By electronicsIncluded= By.xpath("//td[contains(text(),'Electronics Included')]//following::select[1]");
+	static By softgoodsIncluded= By.xpath("//td[contains(text(),'Softgoods Included')]//following::select[1]");
+
+
+	int y=0;
+	String loginVal;
+	Boolean flaglogin=false;
+	static String valULCS;
+	static String valULCSAfterChange;
+
+
+	@Test(dataProvider="testDataTest")
+	//public void tcProduct(String login, String pwd, String AttributeGroup, String Verification,String Create, String SetState, String ReadView, String UpdateProduct,String UpdateProductSeason, String Delete,String SeasonYear,String LSAction,String LSViews) throws Exception{
+	public void tcProduct(String[] productData) throws Exception{
+		try{
+			count++;
+			System.out.println(runmodes[count]);
+			if(!runmodes[count].equalsIgnoreCase("y")){
+				skip=true;
+				log.debug(this.getClass().getSimpleName()+" Testdata row number "+(count+1)+" is skippped as runmode is set to N");
+				throw new SkipException(this.getClass().getSimpleName()+" Testdata row number "+(count+1)+" is skipped as runmode is set to N");
+			}
+			log.debug("Inside testcase for Security Product");
+			//	log.debug(login+"--"+pwd+"--"+AttributeGroup+"--"+Verification+"--"+Create+"--"+SetState+"--"+ReadView+"--"+UpdateProduct+"--"+UpdateProductSeason+"--"+Delete);
+			System.out.println("col0 :" + productData[0]);
+			System.out.println("col1 :" + productData[1]);
+			System.out.println("col4 :" + productData[4]);
+			//	driver.manage().timeouts().pageLoadTimeout(myAutomationWait, TimeUnit.SECONDS);
+			if(flaglogin==true)
+			{
+				if(!loginVal.equalsIgnoreCase(productData[0])){
+					y=0;
+					flaglogin=false;
+					CommonProjectFunctions.logOut();
+				}
+			}
+			if(runmodes[count].equalsIgnoreCase("y")){
+				if(y==0){
+					openBrowser();
+					launchApp(productData[0],productData[1]);
+					y++;
+					System.out.println("y: "+y);
+					loginVal=productData[0];
+					flaglogin=true;
+				}
+			}
+			//Create Product from LineSheet
+			if(productData[3].equalsIgnoreCase("Create"))
+			{ CreateProductFromLineSheet(productData); }
+			//SetState
+			if(productData[3].equalsIgnoreCase("SetState"))
+			{ SetState(productData); }
+
+			//Read view verification
+			if(productData[3].equalsIgnoreCase("Hierarchy"))
+			{	verifyHierarchyReadView(productData);}
+			if(productData[3].equalsIgnoreCase("General Attirbutes"))
+			{  verifyGeneralAttributesReadView(productData); }
+			if(productData[3].equalsIgnoreCase("Retail Item Counts"))
+			{  verifyRetailItemCountsReadView(productData); }
+			if(productData[3].equalsIgnoreCase("Global Froecasting"))
+			{  verifyGlobalFroecastingReadView(productData); }
+
+			if(productData[3].equalsIgnoreCase("Wave Requirements 1 - Dates"))
+			{  verifyWaveRequirements1DatesReadView(productData); }
+			if(productData[3].equalsIgnoreCase("Wave Requirements 2 - Quantity "))
+			{  verifyWaveRequirements2QuantityReadView(productData); }
+			if(productData[3].equalsIgnoreCase("Wave Requirements 4 - Suffix"))
+			{  verifyWaveRequirements4SuffixReadView(productData); }
+			if(productData[3].equalsIgnoreCase("Wave Requirements 5 - Distribution"))
+			{  verifyWaveRequirements5DistributionReadView(productData); }
+			if(productData[3].equalsIgnoreCase("Finance"))
+			{  verifyFinanceReadView(productData); }
+
+			//Update
+			if(productData[3].equalsIgnoreCase("Wave Requirements 1 - Dates"))
+			{  verifyWaveRequirements1DatesUpdate(productData); }
+			if(productData[3].equalsIgnoreCase("Wave Requirements 2 - Quantity "))
+			{  verifyWaveRequirements2QuantityUpdate(productData); }
+			if(productData[3].equalsIgnoreCase("Wave Requirements 4 - Suffix"))
+			{  verifyWaveRequirements4SuffixUpdate(productData); }
+			if(productData[3].equalsIgnoreCase("Wave Requirements 5 - Distribution"))
+			{  verifyWaveRequirements5DistributionUpdate(productData); }
+
+			//Update Verification
+			if(productData[3].equalsIgnoreCase("Hierarchy"))
+			{	verifyHierarchyUpdate(productData);}
+			if(productData[3].equalsIgnoreCase("General Attirbutes"))
+			{  verifyGeneralAttributesUpdate(productData); }
+			if(productData[3].equalsIgnoreCase("Retail Item Counts"))
+			{  verifyRetailItemCountsUpdate(productData); }
+			if(productData[3].equalsIgnoreCase("Global Froecasting"))
+			{  verifyGlobalFroecastingUpdate(productData); }
+
+			if(productData[3].equalsIgnoreCase("Finance"))
+			{  verifyFinanceUpdate(productData); }
+			//Delete Product
+			if(productData[3].equalsIgnoreCase("Delete"))
+			{ delete(productData); }
+
+
+
+		}catch(Throwable t){
+			fail=true;
+			ErrorUtil.addVerificationFailure(t);
+		}	
+	}
+
+	//Prerequisite: Create Product
+	public static boolean CreateProductFromLineSheet(String[] productData) throws Exception{
+		try{
+			driver.switchTo().frame("sidebarframe");
+			CommonFunctions.clickButtonOrLink(mySeasonLink, "link", "My Season link");
+			System.out.println("Year: "+productData[10]);
+			wait = new WebDriverWait(driver, 10);
+			//	wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(mySeasonYear));
+			CommonFunctions.waitForVisibilityOfElement(mySeasonYear);
+			//Select Season Year
+			CommonFunctions.selectFromDropDownByVisibleText(mySeasonYear, productData[10]);
+			//Click on Line Sheet link
+			CommonFunctions.clickButtonOrLink(lineSheet, "link", "Line Sheet");
+			Thread.sleep(1000);
+			//	wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.f(mySeasonYear));
+			driver.switchTo().defaultContent();
+			driver.switchTo().frame("contentframe");
+
+			Date date = new Date();
+			//Select Line sheet view
+			//	wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(lineSheetView));
+			CommonFunctions.waitForVisibilityOfElement(lineSheetView);
+			//	if(!productData[2].contains("Trademark Pallet")){
+			if(productData[3].contains("Create")&& productData[4].equalsIgnoreCase("Yes"))
+			{
+				CommonFunctions.selectFromDropDownByVisibleText(lineSheetView, productData[12]);
+				wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(lineSheetAction));
+				CommonFunctions.selectFromDropDownByVisibleText(lineSheetAction, productData[11]);
+				//Click on Assortment/Solid
+				//	wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[contains(text(),'Choose a Type')]")));
+				CommonFunctions.waitForVisibilityOfElement(By.xpath("//td[contains(text(),'Choose a Type')]"));
+				System.out.println(By.xpath("//a[contains(text(),'"+productData[2]+"')]"));
+				CommonFunctions.clickButtonOrLink(By.xpath("//a[contains(text(),'"+productData[2]+"')]"), "link", "Product Type");
+				System.out.println("Prod Name: "+productData[18]+date.getTime());
+				CommonFunctions.enterTextInTextbox(ProductName,productData[18]+date.getTime());
+				if(!productData[2].equalsIgnoreCase("Trademark Display")){
+					//Select Class
+					CommonFunctions.enterTextInTextbox(Class, productData[13]);
+					CommonFunctions.enterTextInTextbox(Division, productData[14]);
+					CommonFunctions.enterTextInTextbox(Brand, productData[15]);
+					if(!productData[2].equalsIgnoreCase("Trademark Pallet")){
+						CommonFunctions.enterTextInTextbox(InternalClassification, productData[16]);
+						CommonFunctions.enterTextInTextbox(AstSolid, productData[17]);
+						CommonFunctions.enterTextInTextbox(IPSensitive,productData[19]);
+					}
+
+					if(productData[2].equalsIgnoreCase("Retail")|| productData[2].equalsIgnoreCase("Bundle Pack")){
+						//Electronics Included
+						CommonFunctions.enterTextInTextbox(electronicsIncluded,productData[5]);
+						//Softgoods Included
+						CommonFunctions.enterTextInTextbox(softgoodsIncluded,productData[6]);
+					}
+				}
+				//Click on Save Button
+				CommonFunctions.clickButtonOrLink(SaveBtn, "Btn", "Save");
+				if(!productData[2].equalsIgnoreCase("Trademark Display")){
+					//wait = new WebDriverWait(driver, 10);
+					wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(viewProductBtn));
+					CommonFunctions.enterTextInTextbox(distributionChannel, productData[20]);
+					if(productData[2].equalsIgnoreCase("Assortment/Solid")){
+						CommonFunctions.enterTextInTextbox(SRPPriceUSD, productData[21]);
+						CommonFunctions.enterTextInTextbox(USDomestic, productData[22]);
+						CommonFunctions.enterTextInTextbox(LCPriceUSD, productData[23]);
+						CommonFunctions.enterTextInTextbox(DOMPriceUSD, productData[24]);
+					}
+					if(productData[2].equalsIgnoreCase("Retail")|| productData[2].equalsIgnoreCase("Bundle Pack")){
+						CommonFunctions.enterTextInTextbox(targetCostUSD, productData[21]);
+					}
+				}
+				//Click View Product Button
+				CommonFunctions.clickButtonOrLink(viewProductBtn, "Btn", "View Product");
+			}
+			if(productData[3].contains("Create")&& productData[4].equalsIgnoreCase("No")){
+				WebElement mySelectElm = driver.findElement(lineSheetAction); 
+				Select mySelect= new Select(mySelectElm);
+				List<WebElement> options = mySelect.getOptions();
+				//	dropDownOptionVerificationActions(productData[11],options);
+				boolean bVal=dropDownOptionVerificationActions(productData[11],options);
+				//	dropDownOptionVerification
+				//	if(!bVal)
+				Assert.assertFalse(bVal);
+				/*	else{
+						CommonFunctions.enterTextInTextbox(lineSheetAction, productData[26]);
+						System.out.println(driver.findElements(RO_RIC_CFSpring).size());
+						Assert.assertEquals(driver.findElements(RO_RIC_CFSpring).size(), 1, "Retail Item Counts Not Editable"); 
+					}
+				 */}
+			else{
+				log.info("Create New: Product is not available");
+			}
+			//	}	
+		}catch(Exception e){
+			log.error("Exception in CreateProductFromLineSheet()", e);
+			return false;
+		}
+		return true;
+	}
+
+
+
+	public static boolean dropDownOptionVerificationActions(String a,List<WebElement> b) {
+		try{	
+			for (WebElement option : b) {
+				System.out.println(option.getText());
+				System.out.println("a: "+a);
+				if (option.getText().equalsIgnoreCase(a)) {
+					return true;
+				}
+			}
+			return false;
+		}catch(Exception e){
+			SeleniumDriver.log.error("Exception in dropDownOptionVerificationActions()", e);
+			return false;
+		}
+	}
+
+	public static boolean SetState(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			CommonFunctions.clickButtonOrLink(ddDetailsAction, "btn", "Action dropdown");
+			driver.findElement(ddOptionchangeState).click();
+			String valULCSAfterChange=selectUpdateLifecycleState(productData);
+			Thread.sleep(1000);
+			//Click on Update
+			CommonFunctions.clickButtonOrLink(linkUpdate, "link", "Update");
+			//verification
+			String textRO_UpdateLifecycleState = driver.findElement(RO_UpdateLifecycleState).getText();
+			System.out.println("textRO_UpdateLifecycleState: "+textRO_UpdateLifecycleState);
+			System.out.println("valULCSAfterChange: "+valULCSAfterChange);
+
+			if(productData[3].contains("SetState")&& productData[4].equalsIgnoreCase("Yes")){
+				Assert.assertEquals(textRO_UpdateLifecycleState, valULCSAfterChange);
+			}
+			else if(productData[3].contains("SetState")&& productData[4].equalsIgnoreCase("No")){
+				Assert.assertNotEquals(textRO_UpdateLifecycleState, valULCSAfterChange);
+			}
+			else
+				log.info("SetState or chageState is not applicable(NA)");
+		}catch(Exception e){
+			log.error("Exception in SetState()", e);
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean delete(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			if(productData[3].contains("Delete")&& productData[4].equalsIgnoreCase("Yes")){
+				CommonFunctions.clickButtonOrLink(ddDetailsAction, "btn", "Action dropdown");
+				driver.findElement(ddOptionDeleteProduct).click();
+				CommonFunctions.waitForVisibilityOfElement(headerDeleteObject);
+				//Click on delete button
+				CommonFunctions.clickButtonOrLink(deleteButton,"btn", "Delete");
+				//Accept AletPopup
+				CommonFunctions.handleAlertPopUp();
+				//	Assert.assertEquals(textRO_UpdateLifecycleState, valULCSAfterChange);
+			}
+			else if(productData[3].contains("Delete")&& productData[4].equalsIgnoreCase("No")){
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				Assert.assertFalse(bVal);
+			}
+			else
+				log.info("Delete is not applicable(NA)");
+		}catch(Exception e){
+			log.error("Exception in delete()", e);
+			return false;
+		}
+		return true;
+	}
+	//This funcion is to select Update Lifecycle State	
+	public static String selectUpdateLifecycleState(String[] productData) throws Exception{
+		try{
+			valULCS = new Select(driver.findElement(Editable_UpdateLifecycleState)).getFirstSelectedOption().getText();
+			//	System.out.println("valULCS: "+valULCS);
+			if(valULCS.contains("In Work")){
+				//	CommonFunctions.selectFromDropDownByVisibleText(Editable_UpdateLifecycleState, "Released ");
+				CommonFunctions.enterTextInTextbox(Editable_UpdateLifecycleState, "Released");
+			}
+			else if(valULCS.contains("Under Review")){
+				//	CommonFunctions.selectFromDropDownByVisibleText(Editable_UpdateLifecycleState, "Released ");
+				CommonFunctions.enterTextInTextbox(Editable_UpdateLifecycleState, "Released");
+			}
+			else if(valULCS.contains("Released")){
+				//CommonFunctions.selectFromDropDownByVisibleText(Editable_UpdateLifecycleState, "In Work ");
+				CommonFunctions.enterTextInTextbox(Editable_UpdateLifecycleState, "In Work");
+			}
+			valULCSAfterChange = new Select(driver.findElement(Editable_UpdateLifecycleState)).getFirstSelectedOption().getText();
+			System.out.println("valULCS: "+valULCSAfterChange);
+		}catch(Exception e){
+			log.error("Exception in selectUpdateLifecycleState()", e);
+			//	return false;
+		}
+		return valULCSAfterChange;
+	}
+
+	//Function consist scenario : Click on detail tab
+	public static boolean clickDetailsTab(String[] productData) throws Exception{
+		try{
+			
+			driver.switchTo().defaultContent();
+			wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt("contentframe"));
+		//	driver.switchTo().frame("contentframe");
+			//	wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(detailsTablink));
+			if(CommonFunctions.waitForVisibilityOfElement(detailsTablink))
+				CommonFunctions.clickButtonOrLink(detailsTablink, "link", "Details tab");
+			//	wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(detailPageSeasonDD));
+			CommonFunctions.waitForVisibilityOfElement(detailPageSeasonDD);
+			System.out.println(productData[10]);
+			//Select Season
+			//	CommonFunctions.enterTextInTextbox(detailPageSeasonDD, productData[10]);
+			if(!productData[3].contains("Delete")){
+				if(CommonFunctions.waitForVisibilityOfElement(detailPageSeasonDD)){
+					CommonFunctions.clickButtonOrLink(detailPageSeasonDD, "Season dropdown");
+					CommonFunctions.clickButtonOrLink(season2018, "2018");
+				}
+			}
+		}catch(Exception e){
+			log.error("Exception in clickDetailsTab()", e);
+			return false;
+		}
+		return true;
+	}
+
+
+	//Function consist scenario : Hierarchy verification:Read_View
+	public static boolean verifyHierarchyReadView(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			if(productData[3].contains("Hierarchy")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelHierarchy).size() != 0){
+					String hirarchyLabel=driver.findElement(labelHierarchy).getText();
+					System.out.println(hirarchyLabel);
+					System.out.println(" Hierarchy:");
+					Assert.assertEquals(hirarchyLabel, " Hierarchy:");
+					log.info("Hirarchy label is Present");
+				}else{
+					log.error("Hirarchy label is Absent");
+				}
+			}
+			else if(productData[3].contains("Hierarchy")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelHierarchy).size() != 0){
+					System.out.println("Hirarchy label is Present");
+					log.error("Hirarchy label is Present");
+				}else{
+					log.info("Hirarchy label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Hieranchy is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyHierarchy()", e);
+			return false;
+		}
+		return true;
+	}
+
+	//Function consist scenario : Hierarchy verification:Update
+	public static boolean verifyHierarchyUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			if(productData[3].contains("Hierarchy")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				Assert.assertTrue(bVal);
+			}
+			else if(productData[3].contains("Hierarchy")&& productData[8].equalsIgnoreCase("No")){
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				if(!bVal)
+					Assert.assertFalse(bVal);
+				else{
+					CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+					System.out.println(driver.findElements(ROHierarchyClass).size());
+					Assert.assertEquals(driver.findElements(ROHierarchyClass).size(), 1, "Hirarchy Not Editable"); 
+				}
+			}
+			else
+			{
+				log.info("For this Hieranchy is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyHierarchy()", e);
+			return false;
+		}
+		return true;
+	}
+
+	//Function consist scenario : General Attributes:Read_View
+	public static boolean verifyGeneralAttributesReadView(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab();
+			if(productData[3].contains("General Attirbutes")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelGeneralAttri).size() != 0){
+					String GALabel=driver.findElement(labelGeneralAttri).getText();
+					System.out.println(GALabel);
+					System.out.println(" General Attributes:");
+					Assert.assertEquals(GALabel, " General Attributes:");
+					log.info("General Attributes label is Present");
+				}else{
+					log.error("General Attributes label is Absent");
+				}
+			}
+			else if(productData[3].contains("General Attirbutes")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelGeneralAttri).size() != 0){
+					System.out.println("General Attirbutes label is Present");
+					log.error("General Attirbutes label is Present");
+				}else{
+					log.info("General Attirbutes label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this General Attributes is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyGeneralAttributesReadView()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : General Attributes://Update
+	public static boolean verifyGeneralAttributesUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab();
+			if(productData[3].contains("General Attirbutes")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				Assert.assertTrue(bVal);
+			}
+			else if(productData[3].contains("General Attirbutes")&& productData[8].equalsIgnoreCase("No")){
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				if(!bVal)
+					Assert.assertFalse(bVal);
+				else{
+					CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+					System.out.println(driver.findElements(ROProductName).size());
+					Assert.assertEquals(driver.findElements(ROProductName).size(), 1, "General Attributes Not Editable"); 
+				}
+			}	
+			else
+			{
+				log.info("For this General Attributes is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyGeneralAttributesUpdate()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : Retail Item Counts:Read_View
+	public static boolean verifyRetailItemCountsReadView(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			if(productData[3].contains("Retail Item Counts")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelRetailItemCount).size() != 0){
+					String label=driver.findElement(labelRetailItemCount).getText();
+					System.out.println(label);
+					System.out.println(" Retail Item Counts:");
+					Assert.assertEquals(label, " Retail Item Counts:");
+					log.info("Retail Item Counts label is Present");
+				}else{
+					log.error("Retail Item Counts label is Absent");
+				}
+			}
+			else if(productData[3].contains("Retail Item Counts")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelRetailItemCount).size() != 0){
+					System.out.println("Retail Item Counts label is Present");
+					log.error("Retail Item Counts label is Present");
+				}else{
+					log.info("Retail Item Counts label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Retail Item Counts is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyRetailItemCountsReadView()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : Retail Item Counts:Update
+	public static boolean verifyRetailItemCountsUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			if(productData[3].contains("Retail Item Counts")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+				System.out.println(driver.findElements(Editable_RIC_CFSpring).size());
+				Assert.assertEquals(driver.findElements(Editable_RIC_CFSpring).size(), 1, "Retail Item Counts are Editable"); 
+
+			}
+			else if(productData[3].contains("Retail Item Counts")&& productData[8].equalsIgnoreCase("No")){
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				if(!bVal)
+					Assert.assertFalse(bVal);
+				else{
+					CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+					System.out.println(driver.findElements(RO_RIC_CFSpring).size());
+					Assert.assertEquals(driver.findElements(RO_RIC_CFSpring).size(), 1, "Retail Item Counts Not Editable"); 
+				}
+			}
+			else
+			{
+				log.info("For this Retail Item Counts is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyRetailItemCountsUpdate()", e);
+			return false;
+		}
+		return true;
+	}
+
+	//Function consist scenario :GlobalFroecasting:Read_View
+	public static boolean verifyGlobalFroecastingReadView(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			if(productData[3].contains("Global Froecasting")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelGlobalFroecasting).size() != 0){
+					String label=driver.findElement(labelGlobalFroecasting).getText();
+					System.out.println(label);
+					System.out.println(" Global Froecasting:");
+					Assert.assertEquals(label, " Global Froecasting:");
+					log.info("Global Froecasting label is Present");
+				}else{
+					log.error("Global Froecasting label is Absent");
+				}
+			}
+			else if(productData[3].contains("Global Froecasting")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelGlobalFroecasting).size() != 0){
+					System.out.println("Global Froecasting label is Present");
+					log.error("Global Froecasting label is Present");
+				}else{
+					log.info("Global Froecasting label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Global Froecasting is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyGlobalFroecastingReadView()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : GlobalFroecasting:Update
+	public static boolean verifyGlobalFroecastingUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			if(productData[3].contains("Global Froecasting")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				//	dropDownOptionVerification
+				CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+				System.out.println(driver.findElements(Editable_SRPPriceUSD).size());
+				Assert.assertEquals(driver.findElements(Editable_SRPPriceUSD).size(), 1, "Global Froecasting are Editable"); 
+
+			}
+			else if(productData[3].contains("Global Froecasting")&& productData[8].equalsIgnoreCase("No")){
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				if(!bVal)
+					Assert.assertFalse(bVal);
+				else{
+					CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+					System.out.println(driver.findElements(RO_SRPPriceUSD).size());
+					Assert.assertEquals(driver.findElements(RO_SRPPriceUSD).size(), 1, "Global Froecasting Not Editable"); 
+				}
+			}
+			else
+			{
+				log.info("For this Global Froecasting is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyGlobalFroecastingUpdate()", e);
+			return false;
+		}
+		return true;
+	}
+
+	//Function consist scenario :Wave Requirements 1 - Dates:Read_View
+	public static boolean verifyWaveRequirements1DatesReadView(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			driver.findElement(ROInternalClassification).click();
+			if(productData[3].contains("Wave Requirements 1 - Dates")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelWaveRequirements1).size() != 0){
+					String label=driver.findElement(labelWaveRequirements1).getText();
+					System.out.println(label);
+					System.out.println(" Wave Requirements 1 - Dates");
+					Assert.assertEquals(label, " Wave Requirements 1 - Dates:");
+					log.info("Wave Requirements 1 - Dates label is Present");
+				}else{
+					log.error("Wave Requirements 1 - Dates label is Absent");
+					Assert.fail("Wave Requirements 1 - Dates label is Absent");
+				}
+			}
+			else if(productData[3].contains("Wave Requirements 1 - Dates")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelWaveRequirements1).size() != 0){
+					System.out.println("Wave Requirements 1 - Dates label is Present");
+					log.error("Wave Requirements 1 - Dates label is Present");
+				}else{
+					log.info("Wave Requirements 1 - Dates label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Wave Requirements 1 - Dates is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements1DatesReadView()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : Wave Requirements 1 - Dates:Update
+	public static boolean verifyWaveRequirements1DatesUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			Boolean wr1 = driver.findElement(labelWaveRequirements1Edit).isDisplayed();
+			if(productData[3].contains("Wave Requirements 1 - Dates")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				Assert.assertTrue(wr1, "Edit is displayed");
+
+			}
+			else if(productData[3].contains("Wave Requirements 1 - Dates")&& productData[8].equalsIgnoreCase("No")){
+				Assert.assertFalse(wr1, "Edit is not displayed");
+			}
+			else
+			{
+				log.info("For this Wave Requirements 1 - Dates is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements1DatesUpdate()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario :Wave Requirements 2 - Quantity:Read_View
+	public static boolean verifyWaveRequirements2QuantityReadView(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			driver.findElement(ROInternalClassification).click();
+			if(productData[3].contains("Wave Requirements 2 - Quantity")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelWaveRequirements2).size() != 0){
+					String label=driver.findElement(labelWaveRequirements2).getText();
+					System.out.println(label);
+					System.out.println(" Wave Requirements 2 - Quantity");
+					Assert.assertEquals(label, " Wave Requirements 2 - Quantity:");
+					log.info("Wave Requirements 2 - Quantity label is Present");
+				}else{
+					log.error("Wave Requirements 2 - Quantity label is Absent");
+				}
+			}
+			else if(productData[3].contains("Wave Requirements 1 - Dates")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelWaveRequirements2).size() != 0){
+					System.out.println("Wave Requirements 2 - Quantity label is Present");
+					log.error("Wave Requirements 2 - Quantity label is Present");
+				}else{
+					log.info("Wave Requirements 2 - Quantity label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Wave Requirements 2 - Quantity is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements2QuantityReadView()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : Wave Requirements 2 - Quantity:Update
+	public static boolean verifyWaveRequirements2QuantityUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			Boolean wr1 = driver.findElement(labelWaveRequirements2Edit).isDisplayed();
+			if(productData[3].contains("Wave Requirements 2 - Quantity")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				Assert.assertTrue(wr1, "Edit is displayed");
+
+			}
+			else if(productData[3].contains("Wave Requirements 2 - Quantity")&& productData[8].equalsIgnoreCase("No")){
+				Assert.assertFalse(wr1, "Edit is not displayed");
+			}
+			else
+			{
+				log.info("For this Wave Requirements 2 - Quantity is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements2QuantityUpdate()", e);
+			return false;
+		}
+		return true;
+	}	
+
+	//Function consist scenario :Wave Requirements 4 - Suffix:Read_View
+	public static boolean verifyWaveRequirements4SuffixReadView(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			driver.findElement(ROInternalClassification).click();
+			if(productData[3].contains("Wave Requirements 4 - Suffix")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelWaveRequirements4).size() != 0){
+					String label=driver.findElement(labelWaveRequirements4).getText();
+					System.out.println(label);
+					System.out.println(" Wave Requirements 4 - Suffix");
+					Assert.assertEquals(label, " Wave Requirements 4 - Suffix:");
+					log.info("Wave Requirements 4 - Suffix label is Present");
+				}else{
+					log.error("Wave Requirements 4 - Suffix label is Absent");
+				}
+			}
+			else if(productData[3].contains("Wave Requirements 4 - Suffix")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelWaveRequirements4).size() != 0){
+					System.out.println("Wave Requirements 4 - Suffix label is Present");
+					log.error("Wave Requirements 4 - Suffix label is Present");
+				}else{
+					log.info("Wave Requirements 4 - Suffix label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Wave Requirements 4 - Suffix is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements4SuffixReadView()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : Wave Requirements 4 - Suffix:Update
+	public static boolean verifyWaveRequirements4SuffixUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			Boolean wr1 = driver.findElement(labelWaveRequirements4Edit).isDisplayed();
+			if(productData[3].contains("Wave Requirements 4 - Suffix")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				Assert.assertTrue(wr1, "Edit is displayed");
+
+			}
+			else if(productData[3].contains("Wave Requirements 4 - Suffix")&& productData[8].equalsIgnoreCase("No")){
+				Assert.assertFalse(wr1, "Edit is not displayed");
+			}
+			else
+			{
+				log.info("For this Wave Requirements 4 - Suffix is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements4SuffixUpdate()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario :Wave Requirements 5 - Distribution:Read_View
+	public static boolean verifyWaveRequirements5DistributionReadView(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			driver.findElement(ROInternalClassification).click();
+			if(productData[3].contains("Wave Requirements 5 - Distribution")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelWaveRequirements5).size() != 0){
+					String label=driver.findElement(labelWaveRequirements5).getText();
+					System.out.println(label);
+					System.out.println(" Wave Requirements 5 - Distribution");
+					Assert.assertEquals(label, " Wave Requirements 5 - Distribution:");
+					log.info("Wave Requirements 5 - Distribution label is Present");
+				}else{
+					log.error("Wave Requirements 5 - Distribution label is Absent");
+				}
+			}
+			else if(productData[3].contains("Wave Requirements 5 - Distribution")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelWaveRequirements5).size() != 0){
+					System.out.println("Wave Requirements 5 - Distribution label is Present");
+					log.error("Wave Requirements 5 - Distribution label is Present");
+				}else{
+					log.info("Wave Requirements 5 - Distribution label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Wave Requirements 5 - Distribution is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements5DistributionReadView()", e);
+			return false;
+		}
+		return true;
+	}
+	//Function consist scenario : Wave Requirements 5 - Distribution:Update
+	public static boolean verifyWaveRequirements5DistributionUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			Boolean wr1 = driver.findElement(labelWaveRequirements5Edit).isDisplayed();
+			if(productData[3].contains("Wave Requirements 5 - Distribution")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				Assert.assertTrue(wr1, "Edit is displayed");
+
+			}
+			else if(productData[3].contains("Wave Requirements 5 - Distribution")&& productData[8].equalsIgnoreCase("No")){
+				Assert.assertFalse(wr1, "Edit is not displayed");
+			}
+			else
+			{
+				log.info("For this Wave Requirements 5 - Distribution is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyWaveRequirements5DistributionUpdate()", e);
+			return false;
+		}
+		return true;
+	}	
+
+	//Function consist scenario :Finance:Read_View
+	public static boolean verifyFinanceReadView(String[] productData) throws Exception{
+		try{
+			searchProduct(productData);
+			clickDetailsTab(productData);
+			if(productData[3].contains("Finance")&& productData[7].equalsIgnoreCase("Yes")){//Read_View
+				if(driver.findElements(labelFinance).size() != 0){
+					String label=driver.findElement(labelFinance).getText();
+					System.out.println(label);
+					System.out.println(" Finance");
+					Assert.assertEquals(label, " Finance:");
+					log.info("Finance label is Present");
+				}else{
+					log.error("Finance label is Absent");
+				}
+			}
+			else if(productData[3].contains("Finance")&& productData[7].equalsIgnoreCase("No")){
+				if(driver.findElements(labelFinance).size() != 0){
+					System.out.println("Finance label is Present");
+					log.error("Finance label is Present");
+				}else{
+					log.info("Finance label is Absent");
+				}
+			}
+			else
+			{
+				log.info("For this Finance is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyFinanceReadView()", e);
+			return false;
+		}
+		return true;
+	}
+
+	//Function consist scenario : Finance:Update
+	public static boolean verifyFinanceUpdate(String[] productData) throws Exception{
+		try{
+			//	searchProduct(productData);
+			//	clickDetailsTab(productData);
+			if(productData[3].contains("Finance")&& productData[8].equalsIgnoreCase("Yes")){//Update
+				//	dropDownOptionVerification
+				CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+				System.out.println(driver.findElements(Editable_Finance_TargetCostUSD).size());
+				Assert.assertEquals(driver.findElements(Editable_Finance_TargetCostUSD).size(), 1, "Finance are Editable"); 
+
+			}
+			else if(productData[3].contains("Finance")&& productData[8].equalsIgnoreCase("No")){
+				Select select = new Select(driver.findElement(ddDetailsAction));
+				List<WebElement> options = select.getOptions();
+				boolean bVal=CommonFunctions.dropDownOptionVerification(productData[26],options);
+				//	dropDownOptionVerification
+				if(!bVal)
+					Assert.assertFalse(bVal);
+				else{
+					CommonFunctions.enterTextInTextbox(ddDetailsAction, productData[26]);
+					System.out.println(driver.findElements(RO_Finance_TargetCostUSD).size());
+					Assert.assertEquals(driver.findElements(RO_Finance_TargetCostUSD).size(), 1, "Finance Not Editable"); 
+				}
+			}
+			else
+			{
+				log.info("For this Finance is not applicable(NA)");
+			}
+		}catch(Exception e){
+			log.error("Exception in verifyFinanceUpdate()", e);
+			return false;
+		}
+		return true;
+	}	
+
+	public static boolean searchProduct(String[] productData) throws Exception{
+		try{
+			//wait.withTimeout(10, TimeUnit.SECONDS).until(ExpectedConditions.visibilityOfElementLocated(searchProduct));
+			Thread.sleep(2000);
+			driver.switchTo().defaultContent();
+			driver.switchTo().frame("headerframe");
+			CommonFunctions.waitForVisibilityOfElement(searchProduct);
+			driver.findElement(searchProduct).clear();
+			CommonFunctions.enterTextInTextbox(searchProduct, productData[25]);
+			if(CommonFunctions.waitForElementTobeClickable(searchIcon))
+				CommonFunctions.clickButtonOrLink(searchIcon, "Btn", "SearchButton");
+		}catch(Exception e){
+			log.error("Exception in searchProduct()", e);
+			return false;
+		}
+		return true;
+	}
+
+	@AfterMethod
+	public void reporterdataSetResult(){
+		if(skip)
+			Utility.dataSetResult(suiteSecurityXls, this.getClass().getSimpleName(), count+2, "SKIP");
+		else if(fail){
+			Utility.dataSetResult(suiteSecurityXls, this.getClass().getSimpleName(), count+2, "FAIL");
+			isTestPass=false;
+		}
+		else
+			Utility.dataSetResult(suiteSecurityXls, this.getClass().getSimpleName(), count+2, "PASS");
+		skip=false;
+		fail=false;
+	}
+	@BeforeTest
+	public void checkTestcaseSkip() throws Exception{
+
+		if(!Utility.isCaseRunnable(suiteSecurityXls, this.getClass().getSimpleName())){
+			log.debug("Skipping "+this.getClass().getSimpleName()+" as runmode is set to no");
+			throw new SkipException("Skipping "+this.getClass().getSimpleName()+" as runmode is set to no");
+		}
+		runmodes=Utility.getDataSetRunmodeTest(suiteSecurityXls, this.getClass().getSimpleName());
+	}
+	@AfterTest
+	public void reportTestcaseResult(){
+		if(isTestPass){
+			Utility.dataSetResult(suiteSecurityXls,"Testcases", Utility.getRowNum(suiteSecurityXls, this.getClass().getSimpleName()),"PASS");
+		}else
+			Utility.dataSetResult(suiteSecurityXls,"Testcases", Utility.getRowNum(suiteSecurityXls, this.getClass().getSimpleName()),"FAIL");
+
+	}
+
+	@DataProvider
+	public Object[][] testDataTest(){
+		return Utility.getData(suiteSecurityXls, this.getClass().getSimpleName());
+	}
+
+}

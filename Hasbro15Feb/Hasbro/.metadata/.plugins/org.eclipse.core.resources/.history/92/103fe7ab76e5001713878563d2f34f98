@@ -1,0 +1,586 @@
+package com.hasbro.views;
+/**
+ * @author Anjali Gupta
+ *
+ */
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import com.hasbro.security.BOMInternalMainUser;
+import com.hasbro.security.Colorway;
+import com.hasbro.security.CostsheetExternalProduct;
+import com.hasbro.security.CostsheetInternal;
+import com.hasbro.security.CostsheetTooling;
+import com.hasbro.security.InternalBOMSoftG;
+import com.hasbro.security.Product;
+import com.hasbro.security.SourcingConfig;
+
+import base.SeleniumDriver;
+import util.CommonFunctions;
+import util.CommonProjectFunctions;
+import util.ErrorUtil;
+import util.Utility;
+
+
+public class BOMView extends TestsuiteBase{
+
+	String runmodes[]=null;
+	static int count=-1;
+	static boolean skip=false;
+	static boolean fail=false;
+	static boolean isTestPass=true;
+	static WebDriverWait wait=null;
+	public static By libraryLink = By.id("librariesContentIcon");
+	static String strBOMInWork;
+	static String  BOMnameInWork1;
+	static String strViewOwner;
+	static String prodName;
+
+
+	public static By adminLink = By.xpath("//a[contains(text(),'Administrative')]");
+	public static By manageUsersIcon = By.id("manageUsersIcon");
+	public static By organizationUsers = By.xpath("//a[contains(text(),'Organization Users')]");
+	public static By plusSign = By.xpath("//button[contains(@style,'add')]");
+	public static By participantName = By.xpath("//label[contains(text(),'Participant Name:')]//following::input[1]");
+	public static By searchBtn = By.xpath("//button[text()='Search']");
+	public static By okBtn = By.xpath("//button[contains(text(),'K')]");
+	public static By infoIcon = By.xpath("//img[contains(@src,'details.gif')]");
+	public static By viewIcon = By.xpath("//img[contains(@src,'view.png')]");
+	public static By hasbroProdBOMView = By.xpath("//a[text()='Hasbro Product BOM View']");
+	public static By updateTableLayout = By.xpath("//img[contains(@src,'customize_tablebutton.gif')]");
+	public static By updateTableLayoutHidden = By.xpath("//div[@id='updateViewDiv' and @style='display: none;']//img[contains(@src,'customize_tablebutton.gif')]");
+	public static By lblFactory = By.xpath("//a[text()='Factory:']");
+	public static By search = By.id("SearchButton2");
+	
+	public static By viewOwner = By.xpath("//td[contains(text(),'View Owner')]//following::td[1]");
+
+	static int y=0;
+	String loginVal;
+	Boolean flaglogin=false;
+	static String child;
+	static String strTestCaseName = null;
+
+
+	@Test(dataProvider="testDataTest")
+	//public void tcProduct(String login, String pwd, String AttributeGroup, String Verification,String Create, String SetState, String ReadView, String UpdateProduct,String UpdateProductSeason, String Delete,String SeasonYear,String LSAction,String LSViews) throws Exception{
+	public void tcProduct(String[] data) throws Exception{
+		try{
+			count++;
+			System.out.println(runmodes[count]);
+			if(!runmodes[count].equalsIgnoreCase("y")){
+				skip=true;
+				log.debug(this.getClass().getSimpleName()+" Testdata row number "+(count+1)+" is skippped as runmode is set to N");
+				throw new SkipException(this.getClass().getSimpleName()+" Testdata row number "+(count+1)+" is skipped as runmode is set to N");
+			}
+			strTestCaseName = "User:"+data[0] + " for testcase:"+data[3]+" for BOM Type: "+data[2] ;			
+		//	log.debug("Inside testcase for BOM view");
+			log.info("Inside Test Case:-> " + strTestCaseName);
+
+			log.info("col0 :" + data[0]);
+			log.info("col2 :" + data[2]);
+			log.info("col3 :" + data[3]);
+			//	driver.manage().timeouts().pageLoadTimeout(myAutomationWait, TimeUnit.SECONDS);
+			if(flaglogin==true)
+			{
+				if(!loginVal.equalsIgnoreCase(data[0])){
+					y=0;
+					flaglogin=false;
+					CommonProjectFunctions.logOut();
+					driver.quit();
+				}
+			}
+			if(runmodes[count].equalsIgnoreCase("y")){
+				if(y==0){
+					openBrowser();
+					launchApp(data[0],data[1]);
+					y++;
+					System.out.println("y: "+y);
+					loginVal=data[0];
+					flaglogin=true;
+				}
+			}
+
+			switch (data[3]) {
+			case "CreateIntRetItemBOM":
+				log.info("In side :-> " + data[3]);	
+				createBOMInWork(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "CreateIntProdBOM":
+				log.info("In side :-> " + data[3]);	
+				createBOMInWork(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "CreateSoftGoodsBOM":
+				log.info("In side :-> " + data[3]);	
+				createBOMInWork(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "CreateVendorRetItemBOM":
+				log.info("In side :-> " + data[3]);	
+				createBOMInWork(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "(-- None --)":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Hasbro Product BOM View":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Internal: Full":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Internal: Full General/Deco Labor":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Internal: Full Molding Labor":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Internal: Full Plastic":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Internal: Simple":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Internal: Full Labor":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "Soft Goods BOM View":
+				log.info("In side :-> " + data[3]);	
+				verifyBOMView(data);
+				log.info("Out side :-> " + data[3]);
+				break;
+				/*case "LinePlanGroup":
+				log.info("In side :-> " + data[3]);	
+				verifyLinePlanGroup("LinePlanGroup");
+				log.info("Out side :-> " + data[3]);
+				break;
+			case "System View":
+				log.info("In side :-> " + data[3]);	
+				verifySystemView(data);
+				log.info("Out side :-> " + data[3]);
+				break;*/
+			default:
+				fail=true;
+				log.info("Default is executed");
+			}
+		}catch(Throwable t){
+			fail=true;
+			ErrorUtil.addVerificationFailure(t);
+		}	
+	}
+	public static String[] createBOMInWork(String[] data) throws Exception{
+
+		try{
+			//prodName =CommonProjectFunctions.CreateProdFromLineSheet(data[22], data[6], "Development Plan", "Create New: Product", data[23], data[24], data[25], data[25], data[25], data[25], data[25], data[25], data[25], data[25], data[25], data[25], data[25]);
+			nevigationBOM(data);
+			InternalBOMSoftG.BOMname=createBOM(data);
+			//Create BOM page
+			BOMnameInWork1 = fillCreateBOM(data);
+			System.out.println("BOM Name returned in create page:  " + BOMnameInWork1);
+			fillEditBOM(data);
+			strBOMInWork=new Select(driver.findElement(InternalBOMSoftG.BOMId)).getFirstSelectedOption().getText();
+			System.out.println("Inwork BOM name in detail page after check in: " + strBOMInWork);
+
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in "+data[3], e);
+		}
+		return new String[] {strBOMInWork, BOMnameInWork1};
+	}
+
+	public static void verifyBOMView(String[] data) throws Exception{
+		try{
+			//Select BOM
+			CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.BOMId, strBOMInWork);
+			CommonFunctions.handleAlertPopUp();
+			//Select view type
+			CommonFunctions.clickButtonOrLink(viewIcon, "icon", "View");
+			CommonFunctions.clickButtonOrLink(By.xpath("//a[text()='"+data[3]+"']"), "option", data[3]);
+			verifySequence(data);
+			verifyUserGroup(data);
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in "+data[3], e);
+		}
+	}
+	/*
+	 * Below function verify Sequencing for View Type
+	 */
+	public static boolean verifySequence(String[] data) throws Exception{
+		try {
+			int colIndex=1;
+			int i=14;
+			int j=1;
+			List<WebElement> col1 = driver.findElements(By.xpath("//div[@id='DETAILS_PAGEDisplay']/table/tbody/tr[3]//table[contains(@id,'TBLT')]/tbody/tr/td"));
+			System.out.println(col1.size());
+			for(WebElement e: col1){
+				colIndex=colIndex+1;
+				System.out.println("UI data: "+ e.getText());
+				System.out.println("excel data: "+data[i]);
+				if(data[i].equalsIgnoreCase("NA")){
+					break;
+				}
+				Assert.assertEquals(e.getText().trim(), data[i]);
+				log.info("Col"+j+" :matched for "+ e.getText());
+				i++;
+				j++;
+			}
+			log.info("Sequence verified for: "+ data[3]+" for BOM Type: "+data[2]);
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in verifySequence()", e);
+			return false;
+		}
+		return true;
+	}
+	public static boolean verifyUserGroup(String[] data) throws Exception{
+		try {
+			if(!data[3].equalsIgnoreCase("(-- None --)")) {
+			//Click on update table layout icon
+			CommonFunctions.clickButtonOrLink(updateTableLayout, "Icon", "update table layout");
+			strViewOwner = driver.findElement(viewOwner).getText();
+			Assert.assertEquals(strViewOwner, data[4]);
+			log.info("Owner Group verified for : "+strTestCaseName);
+			//Click on Cancel
+			CommonFunctions.clickButtonOrLink(CostsheetExternalProduct.btnCancel, "btn", "Cancel");
+			}
+			else {
+				Assert.assertEquals(driver.findElements(updateTableLayoutHidden).size(),1);
+				log.info("For None Update icon is not present");
+			}
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in verifyUserGroup()", e);
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean fillEditBOM(String[] data) throws Exception{
+		try {
+			//Switch to mainframe
+			driver.switchTo().frame("mainFrame");
+			//Component or Location
+			InternalBOMSoftG.action = new Actions(driver);
+			InternalBOMSoftG.action.moveToElement(driver.findElement(InternalBOMSoftG.compOrLoca)).doubleClick().perform();
+			CommonFunctions.enterTextInTextbox(InternalBOMSoftG.inputCompOrLoca, data[9]);
+			//Quanity
+			InternalBOMSoftG.action.moveToElement(driver.findElement(InternalBOMSoftG.quantity)).doubleClick().perform();
+			CommonFunctions.enterTextInTextbox(InternalBOMSoftG.inputquantity, data[10]);
+			//Click button btnSaveAndCheckIn
+			CommonFunctions.clickButtonOrLink(InternalBOMSoftG.btnSaveAndCheckIn,"btn", "btnSaveAndCheckIn");
+			CommonFunctions.handleAlertPopUp();
+			//Switch to contentFrame
+			driver.switchTo().frame("contentframe");
+			CommonFunctions.waitForVisibilityOfElement(InternalBOMSoftG.headerAttributes);
+
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in fillEditBOM()", e);
+			return false;
+		}
+		return true;
+	}
+
+	public static String createBOM(String[] data) throws Exception{
+		try {
+			//Click Add New BOM tab
+			CommonFunctions.clickButtonOrLink(InternalBOMSoftG.addNewBOMTab, "btn", "Add New BOM tab");
+			//Enter BOM Type
+			//	CommonFunctions.enterTextInTextbox(InternalBOMSoftG.BOMTypeId, data[2]);
+			CommonFunctions.enterTextInTextbox(BOMInternalMainUser.BOMTypeId, data[2]);
+			//Click Initialize BOM
+			CommonFunctions.clickButtonOrLink(InternalBOMSoftG.initializeBOM,"btn", "Initialize BOM");
+			InternalBOMSoftG.BOMname=data[13]+CommonFunctions.getRandomString(4);
+			System.out.println("BOM Name entered is: " + InternalBOMSoftG.BOMname);
+
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in nevigationBOM()", e);
+			return "";
+		}
+		return InternalBOMSoftG.BOMname;
+	}
+
+	public static String fillCreateBOM(String[] data) throws Exception{
+		try{
+			CommonFunctions.waitForVisibilityOfElement(InternalBOMSoftG.headingCreateBOM);
+			if(data[2].contains("BOM\\Materials\\Product\\Retail Item\\Internal")|| (data[2].contains("BOM\\Materials\\Product\\Product\\Internal")))
+			{	CommonFunctions.enterTextInTextbox(InternalBOMSoftG.name,InternalBOMSoftG.BOMname);
+			//Select colorway
+			CommonFunctions.selectFromDropDownByIndex(InternalBOMSoftG.colorway, 1);
+			//Select Wave
+			CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.wave, data[11]);
+			//Select Currency
+			CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.currency, data[7]);
+			//click on Create
+			CommonFunctions.clickButtonOrLink(Product.createBtn, "btn", "Create");
+			}
+			else if((data[2].contains("BOM\\Materials\\Product\\Retail Item\\Soft Goods"))){
+				CommonFunctions.enterTextInTextbox(InternalBOMSoftG.name,InternalBOMSoftG.BOMname);
+				//Select colorway
+				CommonFunctions.selectFromDropDownByIndex(InternalBOMSoftG.colorway, 1);
+				//Select Wave
+				CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.wave, data[11]);
+
+				//click on Create
+				CommonFunctions.clickButtonOrLink(Product.createBtn, "btn", "Create");			
+			}
+			else if((data[2].contains("BOM\\Materials\\Product\\Retail Item\\Vendor"))){
+				//Select colorway
+				CommonFunctions.selectFromDropDownByIndex(InternalBOMSoftG.colorway, 1);
+				//Select Wave
+				CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.wave, data[11]);
+				//Select Currency
+				CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.currency, data[7]);
+				//Click on factory
+				CommonFunctions.clickButtonOrLink(lblFactory, "link", "Factory");	
+				//Switch window
+				Set set = driver.getWindowHandles();
+				Iterator iter = set.iterator();
+				String parent = (java.lang.String) iter.next();
+				String child = (java.lang.String) iter.next();
+				driver.switchTo().window(child);
+				CommonFunctions.clickButtonOrLink(SourcingConfig.search, "Search For Supplier");
+				//driver.switchTo().defaultContent();
+				System.out.println(By.xpath("//a[contains(text(),'"+data[34]+"')]/preceding::td[1]/a"));
+				driver.findElement(SourcingConfig.choose).click();
+				//CommonFunctions.clickButtonOrLink(By.xpath("//a[contains(text(),'"+data[34]+"')]/preceding::td[1]/a"), "Supplier selected");
+				//CommonFunctions.clickButtonOrLink(SourcingConfig.choose, "Supplier selected");
+			//	driver.switchTo().window(parent);
+
+				driver.switchTo().defaultContent();
+				driver.switchTo().frame("contentframe");
+				//click on Create
+				CommonFunctions.clickButtonOrLink(Product.createBtn, "btn", "Create");			
+			}
+		}
+
+		catch(Exception e){
+			fail=true;
+			log.error("Exception in fillCreateBOM()", e);
+			return "";
+		}
+		return InternalBOMSoftG.BOMname;
+	}
+	public static boolean nevigationBOM(String[] data)throws Exception{
+		try {
+			System.out.println(driver.findElements(InternalBOMSoftG.BOMDetails).size());
+			if(driver.findElements(InternalBOMSoftG.BOMDetails).size()== 0) {
+				CommonProjectFunctions.searchProduct(data[5]);
+				//Click on Specification
+				BOMInternalMainUser.clickSpecificationTab(data[6],data);
+				//Select Source
+				CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.selectSource, data[8]);
+				CommonFunctions.handleAlertPopUp();
+
+				InternalBOMSoftG.strSpec=AddSpecification(data);
+				CommonFunctions.handleAlertPopUp();
+				InternalBOMSoftG.strCW=AddColorway(data);
+				CommonProjectFunctions.clickMaterialsTab();
+			}
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in nevigationBOM()", e);
+			//Some times not able to put URL in broswe due to synchronization,hence TC are failing,to handle it put below statement
+			launchApp(prop.getProperty("adminuser"),prop.getProperty("adminpwd"));	
+		}
+		return true;
+	}
+
+	public static String AddSpecification(String[] data) throws Exception{
+		try{
+			//Add Specification
+			Select dropDownSpec = new Select(SeleniumDriver.driver.findElement(InternalBOMSoftG.selectSpecification));
+			List<WebElement> elementCount = dropDownSpec.getOptions();
+			int count =elementCount.size();
+			if(count>=2)
+			{
+				CommonFunctions.selectFromDropDownByIndex(InternalBOMSoftG.selectSpecification, 1);
+				InternalBOMSoftG.strSpec=new Select(driver.findElement(InternalBOMSoftG.selectSpecification)).getFirstSelectedOption().getText();
+			}
+			else
+			{
+				InternalBOMSoftG.strSpec= CommonProjectFunctions.Create_Specifications(data[11],data[12]);
+				CommonFunctions.selectFromDropDownByIndex(InternalBOMSoftG.selectSpecification, 1);
+				InternalBOMSoftG.strSpec=new Select(driver.findElement(InternalBOMSoftG.selectSpecification)).getFirstSelectedOption().getText();
+			}
+			log.info("Specification is: "+InternalBOMSoftG.strSpec);
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in fillCreateBOM()", e);
+			return "";
+		}
+		return InternalBOMSoftG.strSpec;
+	}
+
+	public static String AddColorway(String[] data) throws Exception{
+		try{
+			//Add colorway
+			Select dropDownCW = new Select(SeleniumDriver.driver.findElement(InternalBOMSoftG.colorwayName));
+			List<WebElement> elementCountCW = dropDownCW.getOptions();
+			int countCW =elementCountCW.size();
+			if(countCW>=2)
+			{
+				CommonFunctions.selectFromDropDownByIndex(InternalBOMSoftG.colorwayName, 1);
+				InternalBOMSoftG.strCW=new Select(driver.findElement(InternalBOMSoftG.colorwayName)).getFirstSelectedOption().getText();
+			}
+			else
+			{
+				InternalBOMSoftG.strCW= InternalBOMSoftG.Create_Colorway(data);
+			}
+			log.info("Colorway is: "+InternalBOMSoftG.strCW);
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in AddColorway()", e);
+			return "";
+		}
+		return InternalBOMSoftG.strCW;
+	}
+	public static String verifyLinePlanGroup(String grpName) throws Exception{
+		try{
+			nevigateUserGroup();
+			//Enter value in Participent Name
+			CommonFunctions.enterTextInTextbox(participantName, grpName);
+			//Click on Search
+			CommonFunctions.clickButtonOrLink(searchBtn, "btn", "Search");
+			//Click on OK button
+			CommonFunctions.clickButtonOrLink(okBtn, "btn", "OK");
+			driver.switchTo().window(child);
+			// Click in info icon
+			CommonFunctions.clickButtonOrLink(infoIcon, "Icon", "Info");
+			//	validateMembers(data);
+
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in CreateVendorRetailItemCS()", e);
+			return "";
+		}
+		return "";
+	}	
+
+	public static String validateMembers(String[] data) throws Exception{
+		try{
+
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in validateMembers()", e);
+			return "";
+		}
+		return "";
+	}	
+
+	public static String verifySystemView(String[] data) throws Exception{
+		try{
+
+		}catch(Exception e){
+			fail=true;
+			log.error("Exception in CreateVendorRetailItemCS()", e);
+			return "";
+		}
+		return "";
+	}	
+	public static boolean nevigateUserGroup() throws Exception
+	{
+		try{
+			driver.switchTo().frame("sidebarframe");
+			//Click on Administrative in left pane
+			CommonFunctions.clickButtonOrLink(adminLink, "lnk", "Administrative");
+			//Click on Manage user Icon
+			CommonFunctions.clickButtonOrLink(manageUsersIcon, "lnk", "Manage user");
+			//Click on Organization user link
+			CommonFunctions.clickButtonOrLink(organizationUsers, "lnk", "Organization user");
+			//Switch to new window
+			Set set = driver.getWindowHandles();
+			Iterator iter = set.iterator();
+			String parent = (java.lang.String) iter.next();
+			String child = (java.lang.String) iter.next();
+			driver.switchTo().window(child);
+			//Click on plus sign
+			CommonFunctions.clickButtonOrLink(plusSign, "icon", "plus");
+			// Switch to new window opened
+			for (String winHandle : driver.getWindowHandles()) {
+				driver.switchTo().window(winHandle);
+			}
+
+		}catch(Exception e){
+			fail=true;
+			//	log.error("Exception in " + data[3]+ "for" + data[17], e);
+			return false;
+		}
+		return true;
+	}
+
+
+	@AfterMethod
+	public void reporterdataSetResult(){
+		if(skip)
+			Utility.dataSetResult(suiteViewsXls, this.getClass().getSimpleName(), count+2, "SKIP");
+		else if(fail){
+			Utility.dataSetResult(suiteViewsXls, this.getClass().getSimpleName(), count+2, "FAIL");
+			isTestPass=false;
+		}
+		else
+			Utility.dataSetResult(suiteViewsXls, this.getClass().getSimpleName(), count+2, "PASS");
+		skip=false;
+		fail=false;
+	}
+	@BeforeTest
+	public void checkTestcaseSkip() throws Exception{
+
+		if(!Utility.isCaseRunnable(suiteViewsXls, this.getClass().getSimpleName())){
+			log.debug("Skipping "+this.getClass().getSimpleName()+" as runmode is set to no");
+			throw new SkipException("Skipping "+this.getClass().getSimpleName()+" as runmode is set to no");
+		}
+		runmodes=Utility.getDataSetRunmodeTest(suiteViewsXls, this.getClass().getSimpleName());
+	}
+	@AfterTest
+	public void reportTestcaseResult(){
+		if(isTestPass){
+			Utility.dataSetResult(suiteViewsXls,"Testcases", Utility.getRowNum(suiteViewsXls, this.getClass().getSimpleName()),"PASS");
+		}else
+			Utility.dataSetResult(suiteViewsXls,"Testcases", Utility.getRowNum(suiteViewsXls, this.getClass().getSimpleName()),"FAIL");
+
+	}
+
+	@DataProvider
+	public Object[][] testDataTest(){
+		return Utility.getData(suiteViewsXls, this.getClass().getSimpleName());
+	}
+
+}
+

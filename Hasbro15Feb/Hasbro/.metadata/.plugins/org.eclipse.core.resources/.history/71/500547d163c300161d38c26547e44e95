@@ -1,0 +1,73 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Security">
+    <listeners>
+<listener class-name="listeners.TestsListenerAdapter"/>
+</listeners>
+
+<test name="Sample">
+<classes>
+<class name="com.hasbro.security.Sample">
+</class></classes>
+</test>
+
+<test name="Colorway">
+<classes>
+<class name="com.hasbro.security.Colorway">
+</class></classes>
+</test>
+
+<test name="Color">
+<classes>
+<class name="com.hasbro.security.Color">
+</class></classes>
+</test>
+
+<test name="Product">
+<classes>
+<class name="com.hasbro.security.Product">
+</class></classes>
+</test>
+
+<test name="ChangeActivity">
+<classes>
+<class name="com.hasbro.security.ChangeActivity">
+</class></classes>
+</test>
+
+<test name="Specifications">
+<classes>
+<class name="com.hasbro.security.Specifications">
+</class></classes>
+</test>
+
+<test name="Supplier">
+<classes>
+<class name="com.hasbro.security.Supplier">
+</class></classes>
+</test>
+
+<test name="Season">
+<classes>
+<class name="com.hasbro.security.Season">
+</class></classes>
+</test>
+
+<test name="BOM">
+<classes>
+<class name="com.hasbro.security.BOM">
+</class></classes>
+</test>
+
+<test name="GlobalLinePlan">
+<classes>
+<class name="com.hasbro.security.GlobalLinePlan">
+</class></classes>
+</test>
+
+<test name="PlaceHolderDevPlan">
+<classes>
+<class name="com.hasbro.security.PlaceHolderDevPlan">
+</class></classes>
+</test>
+
+</suite>

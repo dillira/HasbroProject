@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="base.TestBase"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.support.ui.WebDriverWait"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.support.ui.ExpectedConditions"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.remote.DesiredCapabilities"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.remote.CapabilityType"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.chrome.ChromeOptions"/>
+<fullyQualifiedTypeName name="com.hasbro.security.Specifications"/>
+<fullyQualifiedTypeName name="com.hasbro.security.BOM"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.interactions.Action"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.interactions.Actions"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.NoAlertPresentException"/>
+<fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="java.security.Timestamp"/>
+<fullyQualifiedTypeName name="org.apache.poi.ss.usermodel.DateUtil"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="com.gargoylesoftware.htmlunit.javascript.host.Set"/>
+<fullyQualifiedTypeName name="com.hasbro.security.SourcingConfig"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.Keys"/>
+<fullyQualifiedTypeName name="com.hasbro.security.GlobalLinePlan"/>
+<fullyQualifiedTypeName name="com.hasbro.security.Colorway"/>
+<fullyQualifiedTypeName name="com.hasbro.security.PlaceHolderDevPlan"/>
+<fullyQualifiedTypeName name="com.hasbro.security.Product"/>
+<fullyQualifiedTypeName name="com.hasbro.PC.CSFunctional"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.Alert"/>
+<fullyQualifiedTypeName name="util.CommonProjectFunctions"/>
+<fullyQualifiedTypeName name="com.hasbro.security.CostsheetTooling"/>
+<fullyQualifiedTypeName name="util.MyException"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.By"/>
+<fullyQualifiedTypeName name="java.util.concurrent.TimeUnit"/>
+<fullyQualifiedTypeName name="com.hasbro.security.BOMInternalMainUser"/>
+<fullyQualifiedTypeName name="com.hasbro.security.MaterialBOM"/>
+<fullyQualifiedTypeName name="com.hasbro.security.CostsheetExternalProduct"/>
+<fullyQualifiedTypeName name="util.CommonFunctions"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+</qualifiedTypeNameHistroy>

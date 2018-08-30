@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item value="313" key="DIALOG_Y_ORIGIN"/>
+		<item value="569" key="DIALOG_X_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="sourcingA" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="true" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="sourcinga"/>
+			<item value="sourcingAction"/>
+			<item value="AddSourcingConfiguration"/>
+			<item value="//fail=true;"/>
+			<item value="source"/>
+			<item value="click"/>
+			<item value="season"/>
+			<item value="sourcing"/>
+			<item value="country"/>
+			<item value="updateRjtoR"/>
+			<item value="Bomstatusdetailpage"/>
+			<item value="AddSupplier"/>
+			<item value="MaterialBOM.AddMeterialSource"/>
+			<item value="AddMeterialSource"/>
+			<item value="data[26]"/>
+		</list>
+		<list key="replacehistory">
+			<item value="actionDD"/>
+			<item value="AddMeterialSource"/>
+			<item value="data[19]"/>
+			<item value="data[8]"/>
+			<item value="cpADD"/>
+			<item value="//CommonFunctions.handleAlertPopUp();"/>
+			<item value="//CommonFunctions.selectFromDropDownByVisibleText(InternalBOMSoftG.BOMId, strBOMInWork);"/>
+			<item value="navigateMaterialBOM"/>
+			<item value="AddColor"/>
+			<item value="URBOM"/>
+			<item value=""/>
+			<item value="data[2]"/>
+			<item value="data"/>
+			<item value="suiteViewsXls"/>
+			<item value="updateR"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="546" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="838" key="DIALOG_HEIGHT"/>
+		<item value="113" key="DIALOG_Y_ORIGIN"/>
+		<item value="1211" key="DIALOG_X_ORIGIN"/>
+	</section>
+</section>
